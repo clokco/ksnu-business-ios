@@ -427,13 +427,40 @@
   }
 
   function init() {
-    renderCoreArea();
-    renderCourses();
-    renderConvergence();
-    renderCareer();
-    renderQuiz();
-    bindEvents();
+    // #region agent log
+    fetch('http://127.0.0.1:7737/ingest/994d2ed9-6f32-44b2-9144-ea9b1c131889',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'06473a'},body:JSON.stringify({sessionId:'06473a',runId:'pre-fix',hypothesisId:'B',location:'ios/script.js:init',message:'init start',data:{readyState:document.readyState,bodyClass:document.body&&document.body.className},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
+    try {
+      renderCoreArea();
+      renderCourses();
+      renderConvergence();
+      renderCareer();
+      renderQuiz();
+      bindEvents();
+      // #region agent log
+      var activePanel = document.querySelector('.panel.active');
+      var sheet = document.querySelector('.sheet');
+      var nav = document.querySelector('.bottom-nav');
+      var hero = document.querySelector('.hero-compact');
+      var heroBg = hero ? getComputedStyle(hero).backgroundImage : null;
+      var bodyPad = document.body ? getComputedStyle(document.body).paddingBottom : null;
+      var sheetDisplay = sheet ? getComputedStyle(sheet).display : null;
+      var panelDisplay = activePanel ? getComputedStyle(activePanel).display : null;
+      fetch('http://127.0.0.1:7737/ingest/994d2ed9-6f32-44b2-9144-ea9b1c131889',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'06473a'},body:JSON.stringify({sessionId:'06473a',runId:'pre-fix',hypothesisId:'C',location:'ios/script.js:init:after',message:'init success layout probe',data:{activePanelId:activePanel&&activePanel.id,panelDisplay:panelDisplay,sheetDisplay:sheetDisplay,navChildren:nav&&nav.children.length,heroBgSnippet:heroBg&&String(heroBg).slice(0,120),bodyPad:bodyPad,cssSheets:document.styleSheets.length},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+    } catch (err) {
+      // #region agent log
+      fetch('http://127.0.0.1:7737/ingest/994d2ed9-6f32-44b2-9144-ea9b1c131889',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'06473a'},body:JSON.stringify({sessionId:'06473a',runId:'pre-fix',hypothesisId:'B',location:'ios/script.js:init:catch',message:'init threw',data:{error:String(err),stack:err&&err.stack},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+      throw err;
+    }
   }
+
+  // #region agent log
+  window.addEventListener('error', function (e) {
+    fetch('http://127.0.0.1:7737/ingest/994d2ed9-6f32-44b2-9144-ea9b1c131889',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'06473a'},body:JSON.stringify({sessionId:'06473a',runId:'pre-fix',hypothesisId:'B',location:'ios/script.js:window.onerror',message:'uncaught error',data:{message:e.message,filename:e.filename,lineno:e.lineno},timestamp:Date.now()})}).catch(()=>{});
+  });
+  // #endregion
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

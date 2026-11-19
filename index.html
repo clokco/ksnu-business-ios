@@ -8,11 +8,51 @@
   <meta name="theme-color" content="#3f4d63" />
   <title>KSNU 경영학부 · iOS</title>
   <!-- PC 버전: ../pc/ · UI matched to Android -->
+  <script>
+    (function () {
+      var path = location.pathname;
+      if (!/\.html?$/i.test(path) && !/\/$/.test(path)) {
+        location.replace(path + '/' + location.search + location.hash);
+        return;
+      }
+      var base = path.replace(/[^\/]*$/, '');
+      if (!base) base = './';
+      document.write('<base href="' + base + '">');
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;600;700;800&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css" id="iosMainCss" />
+  <script>
+    // #region agent log
+    (function () {
+      function ping(hypothesisId, message, data) {
+        fetch('http://127.0.0.1:7737/ingest/994d2ed9-6f32-44b2-9144-ea9b1c131889',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'06473a'},body:JSON.stringify({sessionId:'06473a',runId:'post-fix',hypothesisId:hypothesisId,location:'ios/index.html:head',message:message,data:data||{},timestamp:Date.now()})}).catch(function(){});
+      }
+      ping('A', 'page boot', {href: location.href, path: location.pathname, baseHref: document.querySelector('base') && document.querySelector('base').href});
+      window.addEventListener('load', function () {
+        var link = document.getElementById('iosMainCss');
+        var sheetOk = false;
+        var ruleCount = 0;
+        var cssErr = null;
+        try {
+          if (link && link.sheet) {
+            sheetOk = true;
+            ruleCount = link.sheet.cssRules ? link.sheet.cssRules.length : -1;
+          }
+        } catch (e) {
+          cssErr = String(e);
+        }
+        var body = document.body;
+        var cs = body ? getComputedStyle(body) : null;
+        ping('A', 'css load probe', {sheetOk: sheetOk, ruleCount: ruleCount, cssErr: cssErr, bodyBg: cs && cs.backgroundColor, font: cs && cs.fontFamily, cssHref: link && link.href, hasIosClass: !!(body && body.classList.contains('ios-app'))});
+        ping('D', 'critical nodes', {appBar: !!document.querySelector('.app-bar'), hero: !!document.querySelector('.hero-compact'), sheet: !!document.querySelector('.sheet'), bottomNav: !!document.querySelector('.bottom-nav'), panels: document.querySelectorAll('.panel').length});
+      });
+    })();
+    // #endregion
+  </script>
 </head>
 <body class="ios-app">
   <header class="app-bar">
@@ -25,8 +65,7 @@
     <a class="pc-link" href="https://clokco.github.io/ksnu-business/" target="_blank" rel="noopener noreferrer">PC</a>
   </header>
 
-  <section class="hero-compact">
-    <img class="hero-thumb" src="../pc/hero.jpg" alt="" />
+  <section class="hero-compact" aria-label="히어로">
     <div class="hero-copy">
       <h1>글로컬 비즈니스<br /><em>리더</em>의 시작</h1>
       <p>5대 전공 · MCD · 등록금 165.9만</p>
